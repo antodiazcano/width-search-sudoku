@@ -1,81 +1,93 @@
-from typing import List
+"""Script to define a Sudoku board."""
+
+type Row = list[int]
+type Board = list[Row]
 
 
 class Sudoku:
-    """Class to create a sudoku board. 0 means an empty cell."""
+    """Class to create a Sudoku board. 0 means an empty cell."""
 
-    def __init__(self, board: List[List[int]]) -> None:
-        """
-        Constructor of the class.
+    def __init__(self, board: Board) -> None:
+        """Constructor of the class.
 
-        Parameters
-        ----------
-        board : Initial board.
+        Args:
+            board: Initial board.
         """
 
         self.board = board
         self.n = len(board)
-        # Initial cells that are fixed
-        self.fixed = [
-            [True if self.board[x][y] != 0 else False for y in range(self.n)]
-            for x in range(self.n)
-        ]
 
     def __str__(self) -> str:
-        """
-        Str method.
+        """Str method to print the board.
 
-        Returns
-        -------
-        ss : String representation of the board.
+        Returns:
+            board_string: String representation of the board.
         """
 
-        ss = ""
+        board_string = ""
 
         for x in range(self.n):
             for y in range(self.n):
-                ss += "[ " + str(self.board[x][y]) + " ]"
-            ss += "\n"
+                board_string += "[ " + str(self.board[x][y]) + " ]"
+            board_string += "\n"
 
-        return ss
+        return board_string
 
-    def add_number(self, x: int, y: int, num: int) -> None:
-        """
-        Adds a number to a cell.
+    def add_number(self, x: int, y: int, number: int) -> None:
+        """Adds a number to the sudoku.
 
-        Parameters
-        ----------
-        x, y : Coordinates of the cell we want to put the number.
-        num  : Number we want to put.
-        """
-
-        if not self.fixed[x][y]:
-            self.board[x][y] = num
-
-    def possible_move(self, x: int, y: int, num: int) -> bool:
-        """
-        Tells if a movement is possible.
-
-        Parameters
-        ----------
-        x, y : Coordinates of the cell we want to put the number.
-        num  : Number we want to put.
-
-        Returns
-        -------
-        True if the movement is possible, False otherwise.
+        Args:
+            x: X-coordinate where we introduce the number.
+            y: Y-coordinate where we introduce the number.
+            number: Number we introduce.
         """
 
-        # Fixed
-        if self.fixed[x][y]:
+        self.board[x][y] = number
+
+    def _square_has_different_numbers(self, center_x: int, center_y: int) -> bool:
+        """Checks that the current square has different numbers (0 is not taken into
+        account, as it's an empty cell).
+
+        Args:
+            center_x: X coordinate of the center of the square.
+            center_y: Y coordinate of the center of the square.
+
+        Returns:
+            True if the square has different numbers, False otherwise.
+        """
+
+        nums = []
+        for xx in range(3):
+            for yy in range(3):
+                coord_x = center_x - 1 + xx
+                coord_y = center_y - 1 + yy
+                num = self.board[coord_x][coord_y]
+                if num != 0:
+                    nums.append(num)
+
+        if len(set(nums)) < len(nums):
             return False
 
-        # Rows and columns ok
+        return True
+
+    def possible_move(self, x: int, y: int, num: int) -> bool:
+        """Tells if a movement is possible.
+
+        Args:
+            x: X-coordinate of the cell we want to put the number.
+            y: Y-coordinate of the cell we want to put the number.
+            num: Number we want to put.
+
+        Returns:
+            True if the movement is possible, False otherwise.
+        """
+
+        # The number is not already in the same row or column
         for i in range(self.n):
-            if self.board[x][i] == num or self.board[i][y] == num:
+            if num in [self.board[x][i], self.board[i][y]]:
                 return False
 
-        # There are different numbers in the square
+        # There are different numbers in the 3x3 square with center (center_x, center_y)
         if x % 3 == 0:
             center_x = x + 1
         elif x % 3 == 1:
@@ -88,49 +100,30 @@ class Sudoku:
             center_y = y
         else:
             center_y = y - 1
-        # Check that the square has different numbers
-        for x in range(3):
-            for y in range(3):
-                coord_x = center_x - 1 + x
-                coord_y = center_y - 1 + y
-                if self.board[coord_x][coord_y] == num:
-                    return False
-
-        return True
+        return self._square_has_different_numbers(center_x, center_y)
 
     def win(self) -> bool:
-        """
-        Tells if the game is finished.
+        """Tells if the game is finished.
 
-        Returns
-        -------
-        True if the game is finished, False otherwise.
+        Returns:
+            True if the game is finished, False otherwise.
         """
 
         # All rows and columns have 9 different numbers
         for i in range(self.n):
             row = [self.board[i][x] for x in range(self.n)]
             column = [self.board[x][i] for x in range(self.n)]
-            if 0 in row or 0 in column:
+            if (0 in row) or (0 in column):
                 return False
             if len(set(row)) < self.n or len(set(column)) < self.n:
                 return False
 
-        # Each square has 9 different numbers
-        # Obtain the center of each square (there are 9)
+        # Each square has 9 different numbers (there are 9 squares)
         for x in range(3):
             for y in range(3):
                 center_x = 3 * x + 1
                 center_y = 3 * y + 1
-                # Check that square has 9 different numbers
-                nums = []
-                for temp_x in range(3):
-                    for temp_y in range(3):
-                        coord_x = center_x - 1 + temp_x
-                        coord_y = center_y - 1 + temp_y
-                        num = self.board[coord_x][coord_y]
-                        if num in nums:
-                            return False
-                        nums.append(num)
+                if not self._square_has_different_numbers(center_x, center_y):
+                    return False
 
         return True
