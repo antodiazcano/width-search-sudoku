@@ -48,9 +48,9 @@ def _generate_all_new_sudokus(
     for sudoku in sudokus:
         for num in range(1, 10):
             if sudoku.possible_move(coord_x, coord_y, num):
-                sudoku.add_number(coord_x, coord_y, num)
-                board = deepcopy(sudoku.board)
-                new_sudokus.append(Sudoku(board))
+                new_sudoku = Sudoku(deepcopy(sudoku.board))
+                new_sudoku.add_number(coord_x, coord_y, num)
+                new_sudokus.append(new_sudoku)
 
     return new_sudokus
 

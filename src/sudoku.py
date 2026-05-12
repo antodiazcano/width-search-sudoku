@@ -87,7 +87,7 @@ class Sudoku:
             if num in [self.board[x][i], self.board[i][y]]:
                 return False
 
-        # There are different numbers in the 3x3 square with center (center_x, center_y)
+        # The value 'num' was not previously 3x3 square with center (center_x, center_y)
         if x % 3 == 0:
             center_x = x + 1
         elif x % 3 == 1:
@@ -100,7 +100,17 @@ class Sudoku:
             center_y = y
         else:
             center_y = y - 1
-        return self._square_has_different_numbers(center_x, center_y)
+        for xx in range(3):
+            for yy in range(3):
+                if self.board[center_x - 1 + xx][center_y - 1 + yy] == num:
+                    return False
+        # Check all numbers are different in the square.
+        # Note: This is redundant because of the recursion and the way we are solving
+        # the problem, but it may seem clearer.
+        # if not self._square_has_different_numbers(center_x, center_y):
+        #     return False
+
+        return True
 
     def win(self) -> bool:
         """Tells if the game is finished.
