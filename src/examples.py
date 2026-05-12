@@ -52,7 +52,7 @@ def main() -> None:
         ),
     }
 
-    difficulty: Literal["easy", "medium", "hard"] = "medium"
+    difficulty: Literal["easy", "medium", "hard"] = "easy"
 
     print(f"Solving a Sudoku with {difficulty} difficulty!\n")
     start_time = time.time()

@@ -55,22 +55,22 @@ def _generate_all_new_sudokus(
     return new_sudokus
 
 
-def _print_progress(new_sudokus: list[Sudoku], n_zeros: int) -> None:
+def _print_progress(new_sudokus: list[Sudoku], n_cells_left: int) -> None:
     """Prints the status of the current backtrack step.
 
     Args:
         new_sudokus: List with the new sudokus for this iteration.
-        n_zeros: Number of cells to still fill.
+        n_cells_left: Number of cells to still fill.
     """
 
-    if n_zeros == 1:
-        print(f"{n_zeros} cell left")
+    if n_cells_left == 1:
+        print(f"{n_cells_left} cell left")
     else:
-        print(f"{n_zeros} cells left")
+        print(f"{n_cells_left} cells left")
 
     print("Current sudokus:", len(new_sudokus))
 
-    possible_sudokus = len(new_sudokus) * 9**n_zeros
+    possible_sudokus = len(new_sudokus) * 9**n_cells_left
     threshold = 1e6
     if possible_sudokus > threshold:
         print(f"Possible sudokus: {possible_sudokus:.2e}\n")
@@ -94,16 +94,11 @@ def backtrack(sudokus: list[Sudoku]) -> list[Sudoku]:
 
     coord_x, coord_y = _find_first_empty_cell(sudokus[0])
     new_sudokus = _generate_all_new_sudokus(sudokus, coord_x, coord_y)
-    if len(new_sudokus) == 0:
-        print("No solutions found!")
-        return []
-    n_zeros = sum(
-        1 for row in new_sudokus[0].board for cell in row if cell == 0
-    )  # number of cells to still fill
-    _print_progress(new_sudokus, n_zeros)
+    n_cells_left = sum(1 for row in new_sudokus[0].board for cell in row if cell == 0)
+    _print_progress(new_sudokus, n_cells_left)
 
     # Return solutions in case all cells are filled
-    if n_zeros == 0:
+    if n_cells_left == 0:
         solutions = []
         for sudoku in new_sudokus:
             if sudoku.win():
