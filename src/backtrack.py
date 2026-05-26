@@ -82,7 +82,7 @@ def backtrack(sudokus: list[Sudoku]) -> list[Sudoku]:
     """Backtrack algorithm.
 
     Args:
-        boards: List of sudokus.
+        sudokus: List of sudokus.
 
     Returns:
         Winning sudokus (empty list if there is no solution).
