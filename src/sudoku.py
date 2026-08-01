@@ -123,9 +123,9 @@ class Sudoku:
         for i in range(self.n):
             row = [self.board[i][x] for x in range(self.n)]
             column = [self.board[x][i] for x in range(self.n)]
-            if (0 in row) or (0 in column):
-                return False
-            if len(set(row)) < self.n or len(set(column)) < self.n:
+            zero_in_row = (0 in row) or (0 in column)
+            not_enough_numbers = len(set(row)) < self.n or len(set(column)) < self.n
+            if zero_in_row or not_enough_numbers:
                 return False
 
         # Each square has 9 different numbers (there are 9 squares)

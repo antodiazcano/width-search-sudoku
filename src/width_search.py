@@ -1,4 +1,4 @@
-"""Script to implement the backtrack algorithm"""
+"""Script to implement the width_search algorithm"""
 
 from copy import deepcopy
 
@@ -13,29 +13,26 @@ def _find_first_empty_cell(sudoku: Sudoku) -> tuple[int, int]:
 
     Returns:
         X and Y positions of the first empty cell.
+
+    Raises:
+        RuntimeError: If there is not any empty cell.
     """
 
-    flag = False
     for x in range(sudoku.n):
         for y in range(sudoku.n):
             if sudoku.board[x][y] == 0:
-                coord_x = x
-                coord_y = y
-                flag = True
-                break
-        if flag:
-            break
+                return x, y
 
-    return coord_x, coord_y
+    raise RuntimeError("No empty cells left!")
 
 
 def _generate_all_new_sudokus(
     sudokus: list[Sudoku], coord_x: int, coord_y: int
 ) -> list[Sudoku]:
-    """Generates all the new possible sudokus based on the previous backtrack step.
+    """Generates all the new possible sudokus based on the previous width search step.
 
     Args:
-        sudokus: List with the sudokus of the previous backtrack step.
+        sudokus: List with the sudokus of the previous width search step.
         coord_x: X position of the first empty cell.
         coord_y: Y position of the first empty cell.
 
@@ -56,7 +53,7 @@ def _generate_all_new_sudokus(
 
 
 def _print_progress(new_sudokus: list[Sudoku], n_cells_left: int) -> None:
-    """Prints the status of the current backtrack step.
+    """Prints the status of the current width search step.
 
     Args:
         new_sudokus: List with the new sudokus for this iteration.
@@ -78,8 +75,8 @@ def _print_progress(new_sudokus: list[Sudoku], n_cells_left: int) -> None:
         print(f"Possible sudokus: {possible_sudokus}\n")
 
 
-def backtrack(sudokus: list[Sudoku]) -> list[Sudoku]:
-    """Backtrack algorithm.
+def width_search(sudokus: list[Sudoku]) -> list[Sudoku]:
+    """width_search algorithm.
 
     Args:
         sudokus: List of sudokus.
@@ -105,4 +102,4 @@ def backtrack(sudokus: list[Sudoku]) -> list[Sudoku]:
                 solutions.append(sudoku)
         return solutions
 
-    return backtrack(new_sudokus)
+    return width_search(new_sudokus)

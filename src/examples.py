@@ -1,10 +1,10 @@
 """Script to solve some examples."""
 
+import time
 from typing import Literal
 
-import time
-from src.backtrack import backtrack
 from src.sudoku import Sudoku
+from src.width_search import width_search
 
 
 def main() -> None:
@@ -52,11 +52,11 @@ def main() -> None:
         ),
     }
 
-    difficulty: Literal["easy", "medium", "hard"] = "easy"
+    difficulty: Literal["easy", "medium", "hard"] = "hard"
 
     print(f"Solving a Sudoku with {difficulty} difficulty!\n")
     start_time = time.time()
-    solutions = backtrack([sudokus[difficulty]])
+    solutions = width_search([sudokus[difficulty]])
     end_time = time.time()
     print(f"Elapsed time: {end_time - start_time:.2f} seconds\n")
 
